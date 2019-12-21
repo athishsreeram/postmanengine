@@ -6,40 +6,43 @@ const bodyParser = require('body-parser');
 
 
 const app = express()
-const port = 3000
+const port = 3001
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/health', (req, res) => res.send('Postman Engine Running!'))
 
-app.post('/run', function (req, res) {
+app.post('/collection/run', function (req, res) {
     
     console.log('Got body:', req.body);
 
     var reqVal = req.body;
 
     if (reqVal.env === undefined) {
-       child = lsWithGrep(reqVal.file,"");
+       child = newmanRun(reqVal.collection,"");
     }else{
-        child = lsWithGrep(reqVal.file,reqVal.env);
+        child = newmanRun(reqVal.collection,reqVal.env);
     }
-   
-    var output =  '{ "Code":"'+child.status+'" , "result":"'+child.stdout+'" }';
+
+    var output =  '{ "Code":"'+child.status+'" , "result":"'+child.stdout+'" ,"err":"'+child.stderr+'" }';
 
     res.send(output);
   
 
 })
 
-function lsWithGrep(file,env) {
+function newmanRun(file,env) {
  
-    child = spawnSync('newman', ['run', file,'-e',env])
+    try {
 
-    console.log(child.stdout.toString())
-    
-    return child;
+        child = spawnSync('newman', ['run', file,'-e',env])
+
+        return child;
+    }catch (err)  {
+        console.error("Error:: "+err);
+    }
  
-};
+}
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
