@@ -1,0 +1,29 @@
+{
+	"info": {
+		"_postman_id": "9a5d40a2-566d-46d9-b791-fad575cc5b40",
+		"name": "Testnewman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/camel/said/employees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/camel/said/employees",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"camel",
+						"said",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
