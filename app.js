@@ -1,5 +1,5 @@
 const express = require('express')
-const { spawn } = require('child_process')
+const spawnSync = require('child_process').spawnSync;
 const bodyParser = require('body-parser');
 
 
@@ -7,8 +7,6 @@ const bodyParser = require('body-parser');
 
 const app = express()
 const port = 3000
-var result = '';
-var code = '';
 
 app.use(bodyParser.json());
 
@@ -18,50 +16,29 @@ app.post('/run', function (req, res) {
     
     console.log('Got body:', req.body);
 
-    var obj = req.body;
+    var reqVal = req.body;
 
-    if (obj.env === undefined) {
-        lsWithGrep(obj.file,"");
+    if (reqVal.env === undefined) {
+       child = lsWithGrep(reqVal.file,"");
     }else{
-     lsWithGrep(obj.file,obj.env);
+        child = lsWithGrep(reqVal.file,reqVal.env);
     }
-    
-    var output =  '{ "Code":"'+code+'" , "result":"'+result+'" }';
+   
+    var output =  '{ "Code":"'+child.status+'" , "result":"'+child.stdout+'" }';
 
     res.send(output);
   
-    result = '';
-    code = '';
 
 })
 
 function lsWithGrep(file,env) {
-  try {
+ 
+    child = spawnSync('newman', ['run', file,'-e',env])
 
-    ls = spawn('newman', ['run', file,'-e',env])
+    console.log(child.stdout.toString())
     
-    var finished = false;
-
-    ls.stdout.on('data', function (data) {
-        //console.log('stdeout: ' + data);
-        result += data.toString();
-    });
-
-    ls.stderr.on('data', function (data) {
-        //console.log('stderr: ' + data);
-        result += data.toString();
-    });
-
-    ls.on('close', function (code1) {
-        code = code1;
-        console.log("Code "+code1)
-    });
-
-   
-    
-  }catch (err)  {
-     console.error(err);
-  };
+    return child;
+ 
 };
 
 
