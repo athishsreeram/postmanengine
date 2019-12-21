@@ -20,7 +20,11 @@ app.post('/run', function (req, res) {
 
     var obj = req.body;
 
-    lsWithGrep(obj.file,obj.env);
+    if (obj.env === undefined) {
+        lsWithGrep(obj.file,"");
+    }else{
+     lsWithGrep(obj.file,obj.env);
+    }
     
     var output =  '{ "Code":"'+code+'" , "result":"'+result+'" }';
 
@@ -34,7 +38,7 @@ app.post('/run', function (req, res) {
 function lsWithGrep(file,env) {
   try {
 
-    ls =      spawn('newman', ['run', file,])
+    ls = spawn('newman', ['run', file,'-e',env])
     
     var finished = false;
 
