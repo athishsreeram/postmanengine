@@ -8,13 +8,16 @@ WORKDIR /home/node/app
 
 COPY app.js ./
 
+COPY newmanrun.sh ./home/node/app/
+
+RUN chmod 777 ./home/node/app/newmanrun.sh
+
 USER node
 
 RUN npm install -g newman
 
-RUN newman run "https://www.getpostman.com/collections/8a0c9bc08f062d12dcda"
-
 RUN npm install
+
 
 COPY --chown=node:node . .
 
